@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teg's Badgers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+  /* ============================================================
+     TOKENS — palette, type, spacing
+     ============================================================ */
+  :root{
+    --black:       #05050A;
+    --dark-blue:   #10132C;
+    --blue:        #3B5BDB;
+    --purple:      #8B5CF6;
+    --dark-purple: #241353;
+    --text:        #E8E6F5;
+    --text-dim:    #A9A5C8;
+
+    --display: 'Fraunces', serif;
+    --body: 'Work Sans', sans-serif;
+
+    --radius-card: 22px;
+    --border: 2px solid var(--blue);
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--black);
+    color: var(--text);
+    font-family: var(--body);
+    -webkit-font-smoothing: antialiased;
+  }
+  img{ max-width:100%; display:block; }
+  button{ font-family: inherit; cursor:pointer; }
+
+  /* focus visibility */
+  a:focus-visible, button:focus-visible{
+    outline: 3px solid var(--purple);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  /* ============================================================
+     HERO
+     ============================================================ */
+  .hero{
+    background: var(--dark-blue);
+    color: var(--text);
+    position: relative;
+    overflow: hidden;
+    padding: 72px 24px 96px;
+  }
+  .hero-stripes{
+    position:absolute; inset:0;
+    background-image: repeating-linear-gradient(
+      115deg,
+      transparent 0 64px,
+      rgba(139,92,246,0.06) 64px 96px
+    );
+    pointer-events:none;
+  }
+  .hero-inner{
+    max-width: 920px;
+    margin: 0 auto;
+    position: relative;
+    text-align:center;
+  }
+  .hero-mark{
+    width:64px; height:64px;
+    margin: 0 auto 28px;
+    border-radius: 50%;
+    background: var(--purple);
+    border: 3px solid var(--dark-purple);
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--text);
+  }
+  .hero h1{
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: clamp(2.6rem, 5.5vw, 4.4rem);
+    line-height: 1.04;
+    margin: 0 0 20px;
+    letter-spacing: -0.01em;
+  }
+  .hero p{
+    font-size: 1.15rem;
+    line-height: 1.6;
+    max-width: 540px;
+    margin: 0 auto;
+    color: var(--text-dim);
+  }
+
+  /* wavy divider between hero and content, badger-burrow style */
+  .burrow-edge{
+    position:absolute; left:0; right:0; bottom:-1px;
+    height: 46px;
+    background: var(--dark-blue);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 20' preserveAspectRatio='none'%3E%3Cpath d='M0 20 Q 10 0 20 20 Q 30 0 40 20 Q 50 0 60 20 Q 70 0 80 20 Q 90 0 100 20 Q 110 0 120 20 Z'/%3E%3C/svg%3E") bottom / 60px 100% repeat-x;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 20' preserveAspectRatio='none'%3E%3Cpath d='M0 20 Q 10 0 20 20 Q 30 0 40 20 Q 50 0 60 20 Q 70 0 80 20 Q 90 0 100 20 Q 110 0 120 20 Z'/%3E%3C/svg%3E") bottom / 60px 100% repeat-x;
+  }
+
+  /* ============================================================
+     LAYOUT
+     ============================================================ */
+  main{ max-width: 1180px; margin: 0 auto; padding: 8px 24px 100px; }
+
+  .section{ padding: 64px 0 8px; }
+  .section + .section{
+    border-top: 1px dashed rgba(169,165,200,0.25);
+  }
+
+  .section-head{
+    display:flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+  .section-head h2{
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: clamp(1.7rem, 3vw, 2.3rem);
+    margin: 0 0 8px;
+    color: var(--text);
+  }
+  .section-head p{
+    margin:0;
+    max-width: 60ch;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+  .section-count{
+    flex: none;
+    font-family: var(--display);
+    font-size: 0.95rem;
+    color: var(--purple);
+    white-space: nowrap;
+    padding-bottom: 4px;
+  }
+
+  .card-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 30px;
+  }
+
+  /* ============================================================
+     CARD — shield-shaped, not a generic rounded-corner box
+     ============================================================ */
+  .card{
+    background: var(--dark-blue);
+    border: var(--border);
+    border-radius: var(--radius-card) var(--radius-card) 10px 10px;
+    overflow: hidden;
+    display:flex;
+    flex-direction: column;
+    box-shadow: 5px 5px 0 var(--dark-purple);
+  }
+
+  .card-media{
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background: var(--blue);
+    overflow:hidden;
+    border-bottom: var(--border);
+  }
+  .card-media img{
+    width:100%; height:100%; object-fit: cover;
+  }
+  .badge-count{
+    position:absolute;
+    top:10px; right:10px;
+    background: var(--purple);
+    color: var(--text);
+    border: 2px solid var(--dark-purple);
+    border-radius: 999px;
+    padding: 5px 12px 5px 10px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    display:flex; align-items:center; gap:5px;
+    box-shadow: 2px 2px 0 var(--dark-purple);
+  }
+  .badge-count svg{ width:13px; height:13px; flex:none; }
+
+  .card-body{
+    padding: 18px 18px 20px;
+    display:flex;
+    flex-direction: column;
+    flex:1;
+  }
+  .card-body h3{
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 1.25rem;
+    margin: 0 0 8px;
+    color: var(--text);
+  }
+  .card-body .desc{
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--text-dim);
+    margin: 0 0 18px;
+    flex: 1;
+  }
+
+  .play-btn{
+    align-self: flex-start;
+    background: var(--blue);
+    color: var(--text);
+    border: 2px solid var(--dark-purple);
+    border-radius: 999px;
+    padding: 9px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    box-shadow: 3px 3px 0 var(--dark-purple);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+  }
+  .play-btn:hover{
+    background: var(--purple);
+    transform: translate(-2px,-2px);
+    box-shadow: 5px 5px 0 var(--dark-purple);
+  }
+  .play-btn:active{
+    transform: translate(0,0);
+    box-shadow: 1px 1px 0 var(--dark-purple);
+  }
+  .play-btn svg{ width:12px; height:12px; }
+
+  /* empty state, in case a section array is left empty */
+  .empty{
+    border: 2px dashed rgba(169,165,200,0.3);
+    border-radius: 16px;
+    padding: 32px;
+    text-align:center;
+    color: var(--text-dim);
+  }
+
+  footer{
+    text-align:center;
+    padding: 40px 24px 60px;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 560px){
+    .section-head{ flex-direction: column; align-items: flex-start; }
+    .hero{ padding: 56px 20px 84px; }
+  }
+</style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="hero-stripes"></div>
+    <div class="hero-inner">
+      <div class="hero-mark">TEG</div>
+      <h1>Teg's Badgers</h1>
+      <p>Claude helped me :3</p>
+    </div>
+    <div class="burrow-edge"></div>
+  </header>
+
+  <main id="sections-root">
+    <!-- Sections are rendered here by JS from the SECTIONS array below -->
+  </main>
+
+  <footer>Wait for more badgers to release :3</footer>
+
+<script>
+/* ================================================================
+   EDIT YOUR CONTENT HERE.
+   ================================================================
+   This is the only part of the file you need to touch to change
+   what's on the site.
+
+   Add / remove / reorder SECTIONS freely — each one renders as its
+   own titled row of cards, in the order you list them.
+
+   Add / remove / reorder the badgers inside a section's `games`
+   array the same way — each one renders as a card with:
+     image → badgerName → description → badgeCount → Play button
+
+   Fields:
+     image       — url to an image (any size, it gets cropped to fit)
+     badgerName  — shown as the card title
+     description — a sentence or two about the badger / game
+     badgeCount  — number of badges this badger has to offer
+     playUrl     — where the Play button should go (a link).
+                   Use "#" as a placeholder if you don't have one yet.
+================================================================= */
+
+const SECTIONS = [
+  {
+    title: "Badgers",
+    description: "The original badgers with a unique theme",
+    games: [
+      {
+        image: "https://tr.rbxcdn.com/180DAY-8c353be34538e596bc21c155a27da5bf/150/150/GameIcon4/Png/noFilter",
+        badgerName: "badger of the silly friend group",
+        description: "A badger based on a discord group named the silly friend group with 6 people in it. It has our loved badges and hated badges, But this is still a work in progress because one person hasnt answered yet!",
+        badgeCount: 50,
+        playUrl: "https://www.roblox.com/games/112924437365247/badger-of-the-silly-friend-group"
+      },
+      {
+        image: "https://tr.rbxcdn.com/180DAY-d111e601a049bc036dbee4dd47894778/150/150/GameIcon6/Png/noFilter",
+        badgerName: "Sandbox Badger",
+        description: "A badger where you go into sandbox games in roblox, i mean i was pretty bored. I had this idea last month, but i scrapped it because i didnt find that much sandbox games with badges, but then i tried again and i did it!!",
+        badgeCount: 25,
+        playUrl: "https://www.roblox.com/games/131765458736045/Sandbox-Badger"
+      },
+      {
+        image: "https://tr.rbxcdn.com/180DAY-d111e601a049bc036dbee4dd47894778/150/150/GameIcon6/Png/noFilter",
+        badgerName: "ESCAPE THE BADGER 😱😱🦡🦡 (SCARY BADGER🦡🦡🦡🦡)",
+        description: "A slop badger, platinumfalls games. Maybe you will know the theme if i say one of the games is called barry's prison run :sob:",
+        badgeCount: 51,
+        playUrl: "https://www.roblox.com/games/121944536117033/ESCAPE-THE-BADGER-SCARY-BADGER"
+      },
+      {
+        image: "https://tr.rbxcdn.com/180DAY-c6fc84667f33e83652757fe859b413e5/150/150/Image/Png/noFilter",
+        badgerName: "genesis badger",
+        description: "A badger that marks the start of teg's badgers, i gathered 50 amazing badges for you to collect.",
+        badgeCount: 50,
+        playUrl: "https://www.roblox.com/games/107905217041238/genesis-badger"
+      },
+      {
+        image: "https://tr.rbxcdn.com/180DAY-55f24c4f0a10653c67f48120983a1b09/150/150/GameIcon5/Png/noFilter",
+        badgerName: "floppa badger",
+        description: "A badger based on raise a floppa and other raise a floppa games",
+        badgeCount: 105,
+        playUrl: "https://www.roblox.com/games/122477802249580/floppa-badger"
+      },
+      {
+        image: "https://tr.rbxcdn.com/180DAY-52e84783987b37511793ab34b11711cc/150/150/Image/Png/noFilter",
+        badgerName: "ragebait badger",
+        description: "HAAHHAHAHAHAH RAGEBAIT, ALSO 17 BADGES BECAUSE RAGEBAIT NOT EVEN HAHAHAHAHSDHFSAHDFHSAFH",
+        badgeCount: 17,
+        playUrl: "https://www.roblox.com/games/85411126974581/ragebait-badger-17"
+      },
+      {
+        image: "https://tr.rbxcdn.com/180DAY-d111e601a049bc036dbee4dd47894778/150/150/GameIcon6/Png/noFilter",
+        badgerName: "badger.exe",
+        description: "error404",
+        badgeCount: 52,
+        playUrl: "https://www.roblox.com/games/82731817259633/badger-exe"
+      },
+      {
+        image: "https://tr.rbxcdn.com/180DAY-7b3103c547deacfd101f27ee6fd11f0c/150/150/Image/Png/noFilter",
+        badgerName: "most random badger",
+        description: "MY LARGEST BADGER EVER WITH 200 BADGES, ITS SO RANDOM BTW.",
+        badgeCount: 200,
+        playUrl: "https://www.roblox.com/games/83495064264046/most-random-badger"
+      }
+    ]
+  },
+  {
+    title: "Restored/Fixed Badgers",
+    description: "The badgers i restored because the owner was inactive to fix the badger.",
+    games: [
+      {
+        image: "https://tr.rbxcdn.com/180DAY-290eacec53fc80c650ebb49cda5eb4de/150/150/Image/Png/noFilter",
+        badgerName: "ETOH Badger: Fixed",
+        description: "yep",
+        badgeCount: 15,
+        playUrl: "https://www.roblox.com/games/114017371480997/ETOH-Badger-Fixed"
+      },
+      {
+        image: "https://tr.rbxcdn.com/180DAY-72aebecb4d15747b25b9559bfffd3a8b/150/150/Image/Png/noFilter",
+        badgerName: "Raise a Badger: Fixed",
+        description: "A Badger About \"Raise A\" Games: Can You Complete Them All?There are 10 badges to obtain. Good luck...",
+        badgeCount: 10,
+        playUrl: "https://www.roblox.com/games/111663208603997/Raise-A-Badger-10-Fixed"
+      },
+      {
+        image: "https://tr.rbxcdn.com/180DAY-962391e59b8a1ec7b6ce4d9f63c7b755/150/150/Image/Png/noFilter",
+        badgerName: "RETROSLOP BADGER: Fixed",
+        description: "so retro (credits to shayph for badger kit and to the devs who made the games)",
+        badgeCount: 20,
+        playUrl: "https://www.roblox.com/games/102111316241888/RETROSLOP-BADGER-Fixed"
+      },
+      {
+        image: "https://tr.rbxcdn.com/180DAY-8a2116bd9d541c179d7bd4e611fe58b8/150/150/GameIcon3/Png/noFilter",
+        badgerName: "Steal a Badger: Fixed",
+        description: "steal slop",
+        badgeCount: 16,
+        playUrl: "https://www.roblox.com/games/133660090343366/Steal-a-Badger-Fixed"
+      },
+      {
+        image: "https://tr.rbxcdn.com/180DAY-82470fe7f871f04a788625ecf10f8069/150/150/Image/Png/noFilter",
+        badgerName: "ROBEY100 BADGER: Fixed",
+        description: "RAHHHH",
+        badgeCount: 25,
+        playUrl: "https://www.roblox.com/games/87209387554446/ROBEY100-BADGER-Fixed"
+      },
+      {
+        image: "https://tr.rbxcdn.com/180DAY-e90e1c559b8c49745a4376d4762676d9/150/150/Image/Png/noFilter",
+        badgerName: "Timeless Badger: Fixed",
+        description: "This is a badger with a lot of old classic games mixed with some newer ones, they all follow a similar style, I hope you enjoy!",
+        badgeCount: 17,
+        playUrl: "https://www.roblox.com/games/129067346740133/Timeless-Badger-17-Fixed"
+      },
+      {
+        image: "https://tr.rbxcdn.com/180DAY-84515e12c7415c1a8ff29c1695c30dd8/150/150/Image/Png/noFilter",
+        badgerName: "🍄 INDEPTH: Restored",
+        description: "a badger i made for fun",
+        badgeCount: 10,
+        playUrl: "https://www.roblox.com/games/79395938709774/INDEPTH-Restored"
+      },
+      {
+        image: "https://tr.rbxcdn.com/180DAY-55f24c4f0a10653c67f48120983a1b09/150/150/GameIcon5/Png/noFilter",
+        badgerName: "bob badger: recreated",
+        description: "hi bob",
+        badgeCount: 15,
+        playUrl: "https://www.roblox.com/games/89414232538504/bob-badger-recreated"
+      },
+      {
+        image: "https://tr.rbxcdn.com/180DAY-6f04369060213cc72bbec0d8dd5a47a4/150/150/GameIcon8/Png/noFilter",
+        badgerName: "pixel badger: recreated",
+        description: "studdeding",
+        badgeCount: 15,
+        playUrl: "https://www.roblox.com/games/100949189893207/pixel-badger-recreated"
+      },
+      {
+        image: "https://tr.rbxcdn.com/180DAY-dc729135d7789ab11a92a9d761648577/150/150/GameIcon2/Png/noFilter",
+        badgerName: "Skull Kids Final Resting Place: Restored",
+        description: "THIS IS A WORK IN PROGRESS",
+        badgeCount: 18,
+        playUrl: "https://www.roblox.com/games/75883998443413/Skull-Kids-Final-Resting-Place-Restored"
+      },
+    ]
+  },
+  {
+    title: "Night Watch",
+    description: "For badgers who only come out after dark.",
+    games: [
+      {
+        image: "https://images.unsplash.com/photo-1483721310020-03333e577078?w=800&q=80",
+        badgerName: "Ash",
+        description: "Ash patrols the hedgerow by moonlight. A stealth game about staying out of the fox's path.",
+        badgeCount: 18,
+        playUrl: "#"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1444464666168-49d633b86797?w=800&q=80",
+        badgerName: "Sable",
+        description: "Sable counts stars from the top of the hill. A slow, atmospheric stargazing puzzle.",
+        badgeCount: 9,
+        playUrl: "#"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=800&q=80",
+        badgerName: "Juniper",
+        description: "Juniper follows the scent trail home. A pathfinding game with a badge for every shortcut found.",
+        badgeCount: 21,
+        playUrl: "#"
+      }
+    ]
+  }
+];
+
+/* ================================================================
+   RENDERING — you shouldn't need to edit below this line.
+   ================================================================ */
+
+const badgeIcon = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 14.4 7.2 16.9l.9-5.4L4.2 7.7l5.4-.8L12 2z"
+    fill="currentColor"/>
+</svg>`;
+
+const playIcon = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M6 4l14 8-14 8V4z" fill="currentColor"/>
+</svg>`;
+
+function escapeHTML(str){
+  const div = document.createElement('div');
+  div.textContent = str ?? '';
+  return div.innerHTML;
+}
+
+function renderCard(game){
+  const card = document.createElement('article');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="card-media">
+      <img src="${escapeHTML(game.image)}" alt="${escapeHTML(game.badgerName)}" loading="lazy">
+      <span class="badge-count">${badgeIcon}${game.badgeCount ?? 0}</span>
+    </div>
+    <div class="card-body">
+      <h3>${escapeHTML(game.badgerName)}</h3>
+      <p class="desc">${escapeHTML(game.description)}</p>
+      <a class="play-btn" href="${escapeHTML(game.playUrl || '#')}" target="_blank" rel="noopener noreferrer">${playIcon}Play</a>
+    </div>
+  `;
+  return card;
+}
+
+function renderSection(section){
+  const wrap = document.createElement('section');
+  wrap.className = 'section';
+
+  const head = document.createElement('div');
+  head.className = 'section-head';
+  head.innerHTML = `
+    <div>
+      <h2>${escapeHTML(section.title)}</h2>
+      ${section.description ? `<p>${escapeHTML(section.description)}</p>` : ''}
+    </div>
+    <div class="section-count">${(section.games || []).length} badger${(section.games || []).length === 1 ? '' : 's'}</div>
+  `;
+  wrap.appendChild(head);
+
+  const grid = document.createElement('div');
+  grid.className = 'card-grid';
+
+  if (!section.games || section.games.length === 0){
+    const empty = document.createElement('div');
+    empty.className = 'empty';
+    empty.textContent = 'No badgers here yet.';
+    wrap.appendChild(empty);
+  } else {
+    section.games.forEach(game => grid.appendChild(renderCard(game)));
+    wrap.appendChild(grid);
+  }
+
+  return wrap;
+}
+
+function renderAll(){
+  const root = document.getElementById('sections-root');
+  root.innerHTML = '';
+  SECTIONS.forEach(section => root.appendChild(renderSection(section)));
+}
+
+renderAll();
+</script>
+</body>
+</html>
